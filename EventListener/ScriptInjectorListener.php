@@ -69,8 +69,10 @@ class ScriptInjectorListener implements EventSubscriberInterface {
             $script = "http://$this->host:$this->port/livereload.js";
 
             $headers = @get_headers($script);
-            if (!is_array($headers) || strpos($headers[0], '200') === false) {
-                return;
+            if (!is_null($headers) && $headers !== false) {
+                if (!is_array($headers) || strpos($headers[0], '200') === false) {
+                    return;
+                }
             }
 
             $content = $substrFunction($content, 0, $pos)."\n<script src=\"$script\"></script>\n".$substrFunction($content, $pos);
