@@ -1,7 +1,7 @@
 <?php
 
 namespace Kunstmaan\LiveReloadBundle\EventListener;
- 
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
