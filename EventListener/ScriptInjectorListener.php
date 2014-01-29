@@ -1,7 +1,7 @@
 <?php
 
 namespace Kunstmaan\LiveReloadBundle\EventListener;
- 
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -13,12 +13,14 @@ class ScriptInjectorListener implements EventSubscriberInterface {
     protected $enabled;
     protected $host;
     protected $port;
+    protected $check_server_presence;
 
-    public function __construct($host = 'localhost', $port = 35729, $enabled = true)
+    public function __construct($host = 'localhost', $port = 35729, $enabled = true, $check_server_presence = true)
     {
         $this->host = $host;
         $this->port = $port;
         $this->enabled = $enabled;
+        $this->check_server_presence = $check_server_presence;
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
@@ -48,7 +50,7 @@ class ScriptInjectorListener implements EventSubscriberInterface {
     }
 
     /**
-     * Injects the web debug toolbar into the given Response.
+     * Injects the livereload script.
      *
      * @param Response $response A Response instance
      */
@@ -68,8 +70,8 @@ class ScriptInjectorListener implements EventSubscriberInterface {
         if (false !== $pos) {
             $script = "http://$this->host:$this->port/livereload.js";
 
-            $headers = @get_headers($script);
-            if (!is_null($headers) && $headers !== false) {
+            if ($this->check_server_presence) {
+                $headers = @get_headers($script);
                 if (!is_array($headers) || strpos($headers[0], '200') === false) {
                     return;
                 }
